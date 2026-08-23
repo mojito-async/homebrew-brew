@@ -1,14 +1,12 @@
 class Mojolang < Formula
-  desc "Mojo programming language toolchain (Modular), packaged for clean install/uninstall"
+  desc "Mojo programming language toolchain"
   homepage "https://www.modular.com/mojolang"
-  version "1.0.0b2"
   license :cannot_represent
 
   # Upstream ships the toolchain as a conda package (.conda = zip containing a
   # pkg-*.tar.zst payload). The .conda extension is opaque to Homebrew, so the
   # archive lands in buildpath untouched. We unpack it into libexec so every
-  # file lives in the Cellar and `brew uninstall` removes all of it. Nothing
-  # is written to $HOME: MODULAR_HOME is pinned inside libexec by bin/mojo.
+  # file lives in the Cellar and `brew uninstall` removes all of it.
   url "https://conda.modular.com/max/osx-arm64/mojo-compiler-1.0.0b2-release.conda"
   sha256 "91c4d590a152ec2e26846955fcd7ec02796dfaffefa006a1c0c5790575be2051"
 
@@ -27,7 +25,7 @@ class Mojolang < Formula
 
     libexec.mkpath
     system "sh", "-c",
-           %Q("#{Formula["zstd"].opt_bin}/zstd" -dqc "#{payload}" | tar -xf - -C "#{libexec}")
+           %Q(#{formula_opt_bin("zstd")} -dqc "#{payload}" | tar -xf - -C "#{libexec}")
 
     # rattler-build bakes the CI build-machine prefix into modular.cfg; conda
     # rewrites it on install, Homebrew must do the same or the driver cannot
