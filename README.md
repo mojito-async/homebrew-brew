@@ -1,6 +1,6 @@
 # mojito homebrew tap
 
-    brew tap mojito/brew https://github.com/spdrman/homebrew-brew.git
+    brew tap mojito/brew https://github.com/mojito-async/homebrew-brew.git
     brew install mojito/brew/mojolang
 
 `mojolang` installs the Mojo toolchain pinned by the mojito specs
