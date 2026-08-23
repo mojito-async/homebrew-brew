@@ -25,7 +25,7 @@ class Mojolang < Formula
 
     libexec.mkpath
     system "sh", "-c",
-           %Q(#{formula_opt_bin("zstd")} -dqc "#{payload}" | tar -xf - -C "#{libexec}")
+           %Q(#{formula_opt_bin("zstd")}/zstd -dqc "#{payload}" | tar -xf - -C "#{libexec}")
 
     # rattler-build bakes the CI build-machine prefix into modular.cfg; conda
     # rewrites it on install, Homebrew must do the same or the driver cannot
