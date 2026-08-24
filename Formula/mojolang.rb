@@ -10,11 +10,8 @@ class Mojolang < Formula
   sha256 "91c4d590a152ec2e26846955fcd7ec02796dfaffefa006a1c0c5790575be2051"
   license :cannot_represent
 
-  depends_on arch: :arm64
-  depends_on :macos
-  depends_on "zstd"
-  depends_on :macos
-  depends_on "zstd"
+  	depends_on arch: :arm64
+	depends_on "zstd"
 
   def install
     conda = buildpath/"mojo-compiler-#{version}-release.conda"
