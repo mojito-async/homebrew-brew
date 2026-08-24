@@ -1,14 +1,4 @@
-class Mojolang < Formula
-  desc "Mojo programming language toolchain"
-  homepage "https://www.modular.com/mojolang"
   license :cannot_represent
-
-  # Upstream ships the toolchain as a conda package (.conda = zip containing a
-  # pkg-*.tar.zst payload). The .conda extension is opaque to Homebrew, so the
-  # archive lands in buildpath untouched. We unpack it into libexec so every
-  # file lives in the Cellar and `brew uninstall` removes all of it.
-  url "https://conda.modular.com/max/osx-arm64/mojo-compiler-1.0.0b2-release.conda"
-  sha256 "91c4d590a152ec2e26846955fcd7ec02796dfaffefa006a1c0c5790575be2051"
 
   depends_on arch: :arm64
   depends_on :macos
