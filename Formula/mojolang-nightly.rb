@@ -1,22 +1,33 @@
-class Mojolang < Formula
-  desc "Mojo programming language toolchain"
+class MojolangNightly < Formula
+  desc "Mojo programming language toolchain (nightly channel)"
   homepage "https://www.modular.com/mojolang"
 
-  # Upstream ships the toolchain as a conda package (.conda = zip containing a
-  # pkg-*.tar.zst payload). The .conda extension is opaque to Homebrew, so the
-  # archive lands in buildpath untouched. We unpack it into libexec so every
-  # file lives in the Cellar and `brew uninstall` removes all of it.
-  url "https://conda.modular.com/max/osx-arm64/mojo-compiler-1.0.0b2-release.conda"
-  sha256 "91c4d590a152ec2e26846955fcd7ec02796dfaffefa006a1c0c5790575be2051"
+  # Same conda-package layout as the mojolang (stable) formula — see that
+  # file's comments for why the .conda archive is unpacked by hand instead
+  # of left to Homebrew's own downloader. The only real difference here is
+  # the channel: max-nightly instead of max, and a version that changes
+  # roughly daily rather than on a release cadence.
+  #
+  # To bump: fetch the channel's package index and pick the newest
+  # mojo-compiler entry, the same way this pin was set:
+  #
+  #   curl -fsSL https://conda.modular.com/max-nightly/osx-arm64/repodata.json \
+  #     | python3 -c 'import json,sys; d=json.load(sys.stdin); \
+  #         p={**d.get("packages",{}), **d.get("packages.conda",{})}; \
+  #         k=sorted(n for n in p if "mojo-compiler" in n)[-1]; \
+  #         print(k); print(p[k]["sha256"])'
+  #
+  # First line printed is the new package filename — paste it in for the
+  # `mojo-compiler-...-release.conda` segment of `url` below, keeping the
+  # `.conda` extension. Second line is the new `sha256`.
+  url "https://conda.modular.com/max-nightly/osx-arm64/mojo-compiler-25.6.0.dev2025090305-release.conda"
+  sha256 "f594447623b286594605032d6f7663a90bc32ad56813aa2b5a131bb1542c630f"
   license :cannot_represent
 
   depends_on arch: :arm64
   depends_on "zstd"
 
-  # Same driver, same bin/mojo, same Cellar layout as mojolang-nightly — the
-  # two cannot coexist as separate keg-only installs the way e.g. python@3.11
-  # / python@3.12 do, because neither is versioned in its own path. Pick one.
-  conflicts_with "mojolang-nightly", because: "both install bin/mojo from the same conda payload layout"
+  conflicts_with "mojolang", because: "both install bin/mojo from the same conda payload layout"
 
   def install
     conda = buildpath/"mojo-compiler-#{version}-release.conda"
@@ -55,14 +66,18 @@ class Mojolang < Formula
 
   def caveats
     <<~EOS
-      Mojo #{version} is installed under:
+      Mojo #{version} (nightly channel) is installed under:
         #{opt_libexec}
+
+      This is a dev-channel build. Modular publishes a new one roughly daily
+      and makes no compatibility promise between them — expect this pin to
+      go stale faster than mojolang (stable) and to need more frequent bumps.
 
       The `mojo` driver wraps libexec/bin/mojo with MODULAR_HOME pinned inside
       this package, so no environment setup is needed and uninstall removes
       everything, caches included:
 
-        brew uninstall mojolang && brew cleanup mojolang
+        brew uninstall mojolang-nightly && brew cleanup mojolang-nightly
 
       LSP server and lldb debugger live at:
         #{opt_libexec}/bin/mojo-lsp-server
